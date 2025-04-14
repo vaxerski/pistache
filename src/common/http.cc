@@ -504,6 +504,11 @@ namespace Pistache::Http
                 alreadyAppendedChunkBytes += available;
                 return Incomplete;
             }
+
+            // FIXME: this is a temp patch, breaks some views in gitea!!!
+            if (size < alreadyAppendedChunkBytes)
+                throw std::runtime_error("size - alreadyAppendedChunkBytes would overflow. ");
+
             cursor.advance(size - alreadyAppendedChunkBytes);
 
             // trailing EOL
