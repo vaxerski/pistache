@@ -373,8 +373,15 @@ namespace Pistache::Http
                 else if (Header::Registry::instance().isRegistered(name))
                 {
                     std::shared_ptr<Header::Header> header = Header::Registry::instance().makeHeader(name);
-                    header->parseRaw(cursor.offset(start), cursor.diff(start));
-                    message->headers_.add(header);
+                    try
+                    {
+                        header->parseRaw(cursor.offset(start), cursor.diff(start));
+                        message->headers_.add(header);
+                    }
+                    catch (std::exception& e)
+                    {
+                        PS_LOG_ERR("Request had an invalid header, skipping parsing");
+                    }
                 }
 
                 // But also preserve a raw header version too, regardless of whether
